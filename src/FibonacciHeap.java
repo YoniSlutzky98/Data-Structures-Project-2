@@ -5,7 +5,10 @@
  */
 public class FibonacciHeap
 {
-
+	private HeapNode minimalRoot, firstRoot;
+	private int size, markedCount, treeCount;
+	private static int totalCuts, totalLinks;
+	
    /**
     * public boolean isEmpty()
     *
@@ -14,7 +17,7 @@ public class FibonacciHeap
     */
     public boolean isEmpty()
     {
-    	return false; // should be replaced by student code
+    	return size == 0;
     }
 		
    /**
@@ -26,11 +29,78 @@ public class FibonacciHeap
     * Returns the newly created node.
     */
     public HeapNode insert(int key)
-    {    
-    	return new HeapNode(key); // should be replaced by student code
+    {   
+    	HeapNode node = new HeapNode(key);
+    	if (this.isEmpty()) {
+    		this.firstRoot = node;
+    		this.minimalRoot = node;
+    		node.setNext(node);
+    		node.setPrev(node);
+    	}
+    	else {
+    		HeapNode lastRoot = this.firstRoot.prev;
+    		node.setNext(this.firstRoot);
+    		node.setPrev(lastRoot);
+    		lastRoot.setNext(node);
+    		this.firstRoot.setPrev(node);
+    		if (this.minimalRoot.getKey() > node.getKey()) {
+    			this.minimalRoot = node;
+    		}
+    	}	
+    	this.size++;
+    	this.treeCount++;
+    	return node;
     }
 
-   /**
+    /*
+     * Helper function for link()
+     * The function receives the root nodes root1 and root2, and links them.
+     * The function assumes root1.key < root2.key.
+     * The function returns root1
+     * Complexity O(1). 
+     */
+    private HeapNode linkHelper(HeapNode root1, HeapNode root2) {
+    	HeapNode prev2 = root2.getPrev();
+		HeapNode next2 = root2.getNext();
+		prev2.setNext(next2);
+		next2.setPrev(prev2);
+		if (this.firstRoot.getKey() == root2.getKey()) {
+			this.firstRoot = next2;
+		}
+		if (root1.getChild() == null) {
+			root2.setNext(root2);
+			root2.setPrev(root2);
+		}
+		else {
+			HeapNode child1 = root1.getChild();
+			child1.getPrev().setNext(root2);
+			root2.setPrev(child1.getPrev());
+			child1.setPrev(root2);
+			root2.setNext(child1);
+		}
+		root2.setParent(root1);
+		root1.setChild(root2);
+		root1.rank++;
+		this.treeCount--;
+		return root1;
+    }
+    
+    /*
+     *  Helper function for successiveLinking().
+     *  The function receives two root nodes of the same rank.
+     *  The function links the two nodes according to the algorithm we saw in class.
+     *  The function validates the fields of the nodes and of the heap.
+     *  The function returns the root of the new linked tree.
+     *  Complexity O(1).
+     */
+    private HeapNode link(HeapNode root1, HeapNode root2) {
+    	if (root1.getKey() < root2.getKey()) {
+    		return linkHelper(root1, root2);
+    	}
+    	return linkHelper(root2, root1);
+    }
+    
+    /**
     * public void deleteMin()
     *
     * Deletes the node containing the minimum key.
@@ -50,7 +120,7 @@ public class FibonacciHeap
     */
     public HeapNode findMin()
     {
-    	return new HeapNode(678);// should be replaced by student code
+    	return this.minimalRoot;
     } 
     
    /**
@@ -61,7 +131,25 @@ public class FibonacciHeap
     */
     public void meld (FibonacciHeap heap2)
     {
-    	  return; // should be replaced by student code   		
+    	if (!heap2.isEmpty()) {
+    		if (this.isEmpty()) {
+    			this.firstRoot = heap2.firstRoot;
+    			this.minimalRoot = heap2.minimalRoot;
+    		}
+    		else {
+    			HeapNode lastRoot = this.firstRoot.prev;
+    			HeapNode newLastRoot = heap2.firstRoot.prev;
+    			this.firstRoot.setPrev(newLastRoot);
+    			newLastRoot.setNext(this.firstRoot);
+    			lastRoot.setNext(heap2.firstRoot);
+    			heap2.firstRoot.setPrev(lastRoot);
+    			if (this.minimalRoot.getKey() < heap2.minimalRoot.getKey()) {
+    				this.minimalRoot = heap2.minimalRoot;
+    			}
+    		}
+    		this.size = this.size + heap2.size;
+    		this.treeCount = this.treeCount + heap2.treeCount;
+    	}
     }
 
    /**
@@ -72,7 +160,7 @@ public class FibonacciHeap
     */
     public int size()
     {
-    	return -123; // should be replaced by student code
+    	return this.size;
     }
     	
     /**
@@ -84,8 +172,28 @@ public class FibonacciHeap
     */
     public int[] countersRep()
     {
-    	int[] arr = new int[100];
-        return arr; //	 to be replaced by student code
+    	if (this.isEmpty()) {
+    		return new int[] {};
+    	}
+    	int length = 2 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1;
+    	int[] temp = new int[length];
+    	HeapNode root = this.firstRoot;
+    	for (int i = 0; i < this.treeCount; i++) {
+    		temp[root.getRank()]++;
+    		root = root.getNext();
+    	}
+    	int actualLength = 0;
+    	for (int i = temp.length-1; i > -1; i++) {
+    		if (temp[i] > 0) {
+    			actualLength = i + 1;
+    			break;
+    		}
+    	}
+    	int[] res = new int[actualLength];
+    	for (int i = 0; i < res.length; i++) {
+    		res[i] = temp[i];
+    	}
+    	return res;
     }
 	
    /**
@@ -97,7 +205,8 @@ public class FibonacciHeap
     */
     public void delete(HeapNode x) 
     {    
-    	return; // should be replaced by student code
+    	this.decreaseKey(x, Integer.MAX_VALUE);
+    	this.deleteMin();
     }
 
    /**
@@ -122,7 +231,7 @@ public class FibonacciHeap
     */
     public int potential() 
     {    
-    	return -234; // should be replaced by student code
+    	return this.treeCount + 2 * this.markedCount;
     }
 
    /**
@@ -135,7 +244,7 @@ public class FibonacciHeap
     */
     public static int totalLinks()
     {    
-    	return -345; // should be replaced by student code
+    	return totalLinks;
     }
 
    /**
@@ -147,7 +256,7 @@ public class FibonacciHeap
     */
     public static int totalCuts()
     {    
-    	return -456; // should be replaced by student code
+    	return totalCuts;
     }
 
      /**
@@ -174,13 +283,72 @@ public class FibonacciHeap
     public static class HeapNode{
 
     	public int key;
+    	private boolean mark;
+    	private int rank;
+    	private HeapNode parent, prev, next, child;
 
     	public HeapNode(int key) {
     		this.key = key;
     	}
-
+    	
     	public int getKey() {
     		return this.key;
     	}
+    	
+    	private void setKey(int k) {
+    		this.key = k;
+    	}
+    	private boolean getMark() {
+    		return this.mark;
+    	}
+    	
+    	private void mark() {
+    		this.mark = true;
+    	}
+    	
+    	private void unmark() {
+    		this.mark = false;
+    	}
+    	
+    	private int getRank() {
+    		return this.rank;
+    	}
+    	
+    	private void setRank(int r) {
+    		this.rank = r;
+    	}
+    	
+    	private HeapNode getParent() {
+    		return this.parent;
+    	}
+    	
+    	private void setParent(HeapNode p) {
+    		this.parent = p;
+    	}
+    	
+    	private HeapNode getPrev() {
+    		return this.prev;
+    	}
+    	
+    	private void setPrev(HeapNode p) {
+    		this.prev = p;
+    	}
+    	
+    	private HeapNode getNext() {
+    		return this.next;
+    	}
+    	
+    	private void setNext(HeapNode n) {
+    		this.next = n;
+    	}
+    	
+    	private HeapNode getChild() {
+    		return this.child;
+    	}
+    	
+    	private void setChild(HeapNode c) {
+    		this.child = c;
+    	}
+    	
     }
 }
