@@ -80,7 +80,8 @@ public class FibonacciHeap
 		}
 		root2.setParent(root1);
 		root1.setChild(root2);
-		root1.rank++;
+		root1.setRank(root1.getRank()+1);
+		//root1.rank++; // TO DO - use setRank()
 		this.treeCount--;
 		return root1;
     }
