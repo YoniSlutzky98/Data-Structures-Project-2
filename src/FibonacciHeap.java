@@ -371,4 +371,8 @@ public class FibonacciHeap
     		System.out.println(")");
     	}
     }
+    
+    public void printHeap() {
+    	printNode(this.firstRoot);
+    }
 }
