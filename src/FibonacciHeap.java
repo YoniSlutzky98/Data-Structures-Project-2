@@ -352,4 +352,23 @@ public class FibonacciHeap
     	}
     	
     }
+    
+    public static void printNode(HeapNode node) {
+    	System.out.println("(");
+    	if (node == null) {
+    		System.out.println(")");
+    		return;
+    	}
+    	else {
+    		HeapNode t = node;
+    		do {
+    			System.out.println(t.getKey());
+    			HeapNode child = t.getChild();
+    			printNode(child);
+    			System.out.println("->");
+    			t = t.getNext();
+    		} while (t.getKey() != node.getKey());
+    		System.out.println(")");
+    	}
+    }
 }
