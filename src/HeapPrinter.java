@@ -126,26 +126,38 @@ public class HeapPrinter {
 
     public static void demo() {
         /* Build an example */
-        FibonacciHeap heap = new FibonacciHeap();
+        FibonacciHeap heap1 = new FibonacciHeap();
+        FibonacciHeap heap2 = new FibonacciHeap();
 
-        heap.insert(20);
-        heap.insert(8);
-        heap.insert(3);
-        heap.insert(100);
-        heap.insert(15);
-        heap.insert(18);
-        heap.insert(1);
-        heap.insert(2);
-        heap.insert(7);
-        //heap.deleteMin();
-        heap.insert(500);
+        heap1.insert(20);
+        heap1.insert(8);
+        heap1.insert(3);
+        heap1.insert(100);
+        heap1.insert(15);
+        heap1.insert(18);
+        heap1.insert(1);
+        heap1.insert(2);
+        heap1.insert(7);
+        stream.println("Printing in regular mode:");
+        HeapPrinter.print(heap1, false);
+        heap1.deleteMin();
+        heap1.insert(500);
 
         /* Print */
-        stream.println("Printing in verbose mode:");
-        HeapPrinter.print(heap, true);
+        //stream.println("Printing in verbose mode:");
+        //HeapPrinter.print(heap1, true);
 
         stream.println("Printing in regular mode:");
-        HeapPrinter.print(heap, false);
+        HeapPrinter.print(heap1, false);
+//        stream.println("Printing in verbose mode:");
+//        HeapPrinter.print(heap2, true);
+
+        stream.println("Printing in regular mode:");
+        HeapPrinter.print(heap2, false);
+        heap1.meld(heap2);
+        HeapPrinter.print(heap1, false);
+        System.out.println(Arrays.toString(heap1.countersRep()));
+    
     }
 
     public static void main(String[] args) {
