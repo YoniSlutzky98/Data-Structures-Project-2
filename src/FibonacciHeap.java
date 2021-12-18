@@ -1,3 +1,10 @@
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * FibonacciHeap
  *
@@ -273,6 +280,13 @@ public class FibonacciHeap
         int[] arr = new int[100];
         return arr; // should be replaced by student code
     }
+
+	/**
+	 *
+	 */
+	public HeapNode getFirst() {
+		return this.firstRoot;
+	}
     
    /**
     * public class HeapNode
@@ -296,83 +310,61 @@ public class FibonacciHeap
     		return this.key;
     	}
     	
-    	private void setKey(int k) { // Sets the key of the node. Complexity O(1).
+    	public void setKey(int k) { // Sets the key of the node. Complexity O(1).
     		this.key = k;
     	}
-    	private boolean getMark() { // Returns the mark of the node. Complexity O(1).
+
+		public boolean getMarked() { // Returns the mark of the node. Complexity O(1).
     		return this.mark;
     	}
-    	
-    	private void mark() { // Marks the node AKA turns its mark field value to true. Complexity O(1).
+
+		public void mark() { // Marks the node AKA turns its mark field value to true. Complexity O(1).
     		this.mark = true; // Means a child was deleted from this node.
     	}
-    	
-    	private void unmark() { // Unmark the node AKA turns its mark field value to false. Complexity O(1).
+
+		public void unmark() { // Unmark the node AKA turns its mark field value to false. Complexity O(1).
     		this.mark = false; // Means we deleted the node from its parent and made it a root.
     	}
-    	
-    	private int getRank() { // Returns the number of children this node has. Complexity O(1).
+
+		public int getRank() { // Returns the number of children this node has. Complexity O(1).
     		return this.rank;
     	}
     	
-    	private void setRank(int r) { // Sets the number of children this node has. Complexity O(1).
+    	public void setRank(int r) { // Sets the number of children this node has. Complexity O(1).
     		this.rank = r; // r represents the number of children.
     	}
     	
-    	private HeapNode getParent() { // Returns the parent node of this node. Complexity O(1).
+    	public HeapNode getParent() { // Returns the parent node of this node. Complexity O(1).
     		return this.parent; // parent could be null if node is root.
     	}
     	
-    	private void setParent(HeapNode p) { // Sets the parent node of this node. Complexity O(1).
+    	public void setParent(HeapNode p) { // Sets the parent node of this node. Complexity O(1).
     		this.parent = p; // p is a node representing the happy newly parent to be.
     	}
     	
-    	private HeapNode getPrev() { // Returns the previous node of this node, AKA its left brother. Complexity O(1).
+    	public HeapNode getPrev() { // Returns the previous node of this node, AKA its left brother. Complexity O(1).
     		return this.prev;
     	}
     	
-    	private void setPrev(HeapNode p) { // Sets this node's previous brother - its left node. Complexity O(1).
+    	public void setPrev(HeapNode p) { // Sets this node's previous brother - its left node. Complexity O(1).
     		this.prev = p; // p is a node representing the left brother.
     	}
     	
-    	private HeapNode getNext() { // Returns the next node of this node, AKA its right brother. Complexity O(1).
+    	public HeapNode getNext() { // Returns the next node of this node, AKA its right brother. Complexity O(1).
     		return this.next;
     	}
     	
-    	private void setNext(HeapNode n) { // Sets this node's next brother - its right node. Complexity O(1).
+    	public void setNext(HeapNode n) { // Sets this node's next brother - its right node. Complexity O(1).
     		this.next = n;
     	}
     	
-    	private HeapNode getChild() { // Returns the leftmost child of this node. Complexity O(1).
+    	public HeapNode getChild() { // Returns the leftmost child of this node. Complexity O(1).
     		return this.child;
     	}
     	
-    	private void setChild(HeapNode c) { // Sets the leftmost child of this node. Complexity O(1).
+    	public void setChild(HeapNode c) { // Sets the leftmost child of this node. Complexity O(1).
     		this.child = c; // c is a node representing the leftmost child of this node.
     	}
     	
-    }
-    
-    public static void printNode(HeapNode node) {
-    	System.out.println("(");
-    	if (node == null) {
-    		System.out.println(")");
-    		return;
-    	}
-    	else {
-    		HeapNode t = node;
-    		do {
-    			System.out.println(t.getKey());
-    			HeapNode child = t.getChild();
-    			printNode(child);
-    			System.out.println("->");
-    			t = t.getNext();
-    		} while (t.getKey() != node.getKey());
-    		System.out.println(")");
-    	}
-    }
-    
-    public void printHeap() {
-    	printNode(this.firstRoot);
     }
 }
