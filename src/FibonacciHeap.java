@@ -20,17 +20,16 @@ public class FibonacciHeap
     	return size == 0;
     }
 		
-   /**
-    * public HeapNode insert(int key)
-    *
-    * Creates a node (of type HeapNode) which contains the given key, and inserts it into the heap.
-    * The added key is assumed not to already belong to the heap.  
-    * 
-    * Returns the newly created node.
-    */
-    public HeapNode insert(int key) // Complexity O(1).
-    {   
+    /* Helper function for insert().
+     * The function creates a node with the given key and given special child.
+     * The function inserts the node into the heap.
+     * The function returns the newly created node. 
+     * 
+     * Complexity O(1).
+     */
+    private HeapNode insertHelper(int key, HeapNode specialChild) {
     	HeapNode node = new HeapNode(key);
+    	node.setSpecialChild(specialChild);
     	if (this.isEmpty()) { // Inserting node to an empty heap.
     		this.firstRoot = node;
     		this.minimalRoot = node;
@@ -49,7 +48,20 @@ public class FibonacciHeap
     	}	
     	this.size++;
     	this.treeCount++;
-    	return node;
+    	return node;	
+    }
+    
+    /**
+    * public HeapNode insert(int key)
+    *
+    * Creates a node (of type HeapNode) which contains the given key, and inserts it into the heap.
+    * The added key is assumed not to already belong to the heap.  
+    * 
+    * Returns the newly created node.
+    */
+    public HeapNode insert(int key) // Complexity O(1).
+    {   
+    	return this.insertHelper(key, null);
     }
 
     /*
@@ -438,8 +450,22 @@ public class FibonacciHeap
     */
     public static int[] kMin(FibonacciHeap H, int k)
     {    
-        int[] arr = new int[100];
-        return arr; // should be replaced by student code
+    	FibonacciHeap helperHeap = new FibonacciHeap();
+    	int[] arr = new int[k];
+    	helperHeap.insertHelper(H.minimalRoot.getKey(), H.minimalRoot.getChild());
+    	for (int i = 0; i < k; i++) {
+    		arr[i] = helperHeap.minimalRoot.getKey();
+    		if (helperHeap.minimalRoot.getSpecialChild() != null) {
+    			HeapNode child = helperHeap.minimalRoot.getSpecialChild();
+    			int first = child.getKey();
+    			do {
+    				helperHeap.insertHelper(child.getKey(), child.getChild());
+    				child = child.getNext();
+    			} while (child.getKey() != first);
+    		}	
+    		helperHeap.deleteMin();
+    	}
+    	return arr;
     }
 
 	/**
@@ -461,7 +487,7 @@ public class FibonacciHeap
     	public int key;
     	private boolean mark;
     	private int rank;
-    	private HeapNode parent, prev, next, child;
+    	private HeapNode parent, prev, next, child, specialChild;
 
     	public HeapNode(int key) {
     		this.key = key;
@@ -525,6 +551,14 @@ public class FibonacciHeap
     	
     	public void setChild(HeapNode c) { // Sets the leftmost child of this node. Complexity O(1).
     		this.child = c; // c is a node representing the leftmost child of this node.
+    	}
+    	
+    	private HeapNode getSpecialChild() {
+    		return this.specialChild;
+    	}
+    	
+    	private void setSpecialChild(HeapNode c) {
+    		this.specialChild = c;
     	}
     	
     }
