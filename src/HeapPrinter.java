@@ -157,7 +157,12 @@ public class HeapPrinter {
         heap1.meld(heap2);
         HeapPrinter.print(heap1, false);
         System.out.println(Arrays.toString(heap1.countersRep()));
-    
+        heap1.deleteMin();
+        HeapPrinter.print(heap1, false);
+        heap1.delete(heap1.getFirst().getChild().getChild());
+        HeapPrinter.print(heap1, false);
+        heap1.delete(heap1.getFirst().getChild().getChild());
+        HeapPrinter.print(heap1, false);
     }
 
     public static void main(String[] args) {

@@ -113,6 +113,7 @@ public class FibonacciHeap
     	do {
     		while (cups[curr.getRank()] != null) {
     			curr = this.link(curr, cups[curr.getRank()]);
+    			cups[curr.getRank()-1] = null;
     		}
     		cups[curr.getRank()] = curr;
     		curr = curr.getNext();
@@ -320,7 +321,58 @@ public class FibonacciHeap
     	this.deleteMin(); // Now we can call the original deleteMin function, in O(logn) complexity.
     }
 
-   /**
+    /*
+     *  Helper function for cascadingCuts().
+     *  The function receives a non-root node.
+     *  The function cuts the node from its parent and adds it as a root.
+     *  Complexity O(1).
+     */
+    private void cut(HeapNode node) {
+    	HeapNode parent = node.getParent();
+    	node.setParent(null);
+    	node.unmark();
+    	this.markedCount--;
+    	parent.setRank(parent.getRank()-1);
+    	if (node.getNext().getKey() == node.getKey()) { // If node is an only child
+    		parent.setChild(null);
+    	}
+    	else {
+    		if (parent.getChild().getKey() == node.getKey()) { // If node is the first child and isn't single 
+        		parent.setChild(node.getNext());
+    		}
+    		node.getNext().setPrev(node.getPrev());
+    		node.getPrev().setNext(node.getNext());
+    	}
+    	this.firstRoot.getPrev().setNext(node);
+    	node.setPrev(this.firstRoot.getPrev());
+    	this.firstRoot.setPrev(node);
+    	node.setNext(this.firstRoot);
+    	if (this.minimalRoot.getKey() > node.getKey()) {
+    		this.minimalRoot = node;
+    	}
+    	FibonacciHeap.totalCuts++;
+    	this.treeCount++;
+    }
+    
+    /*
+     *  Helper function for decreaseKey()
+     *  The function receives a node and begins the cascading cut process.
+     *  A.C. Complexity O(1).
+     */
+    private void cascadingCut(HeapNode node) {
+    	HeapNode parent = node.getParent();
+    	cut(node);
+    	if (parent.getParent() != null) {
+    		if (!parent.getMarked()) {
+    			parent.mark();
+    		}
+    		else {
+    			cascadingCut(parent);
+    		}
+    	}	
+    }
+    
+    /**
     * public void decreaseKey(HeapNode x, int delta)
     *
     * Decreases the key of the node x by a non-negative value delta. The structure of the heap should be updated
@@ -328,7 +380,13 @@ public class FibonacciHeap
     */
     public void decreaseKey(HeapNode x, int delta) // Complexity O(1) amortized.
     {    
-    	return; // should be replaced by student code
+    	x.setKey(x.getKey() - delta);
+    	if (x.getParent() == null) {
+    		return;
+    	}
+    	if (x.getKey() < x.getParent().getKey()) {
+    		cascadingCut(x);
+    	}
     }
 
    /**
