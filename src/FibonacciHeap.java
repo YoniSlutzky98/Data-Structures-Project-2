@@ -253,7 +253,7 @@ public class FibonacciHeap
     * Melds heap2 with the current heap.
     *
     */
-    public void meld (FibonacciHeap heap2) // Complexity O(1).
+    public void meld(FibonacciHeap heap2) // Complexity O(1).
     {
     	if (!heap2.isEmpty()) { // Melding current heap with a non-empty heap.
     		if (this.isEmpty()) { // Current heap is empty - make heap2 the current heap.
@@ -328,8 +328,11 @@ public class FibonacciHeap
     *
     */
     public void delete(HeapNode x) // Complexity O(logn).
-    {    
-    	this.decreaseKey(x, Integer.MAX_VALUE); // First decrease the key, so it'd be the new minimal node, O(1) amortized complexity.
+    {   
+    	if (x.getParent() != null) {
+    		cascadingCut(x);
+    	}
+    	this.minimalRoot = x;
     	this.deleteMin(); // Now we can call the original deleteMin function, in O(logn) complexity.
     }
 
@@ -449,7 +452,10 @@ public class FibonacciHeap
     * ###CRITICAL### : you are NOT allowed to change H. 
     */
     public static int[] kMin(FibonacciHeap H, int k)
-    {    
+    {   
+    	if (H.isEmpty()) {
+    		return new int[0];
+    	}
     	FibonacciHeap helperHeap = new FibonacciHeap();
     	int[] arr = new int[k];
     	helperHeap.insertHelper(H.minimalRoot.getKey(), H.minimalRoot.getChild());
@@ -469,7 +475,9 @@ public class FibonacciHeap
     }
 
 	/**
-	 *
+	 * Helper function.
+	 * The function returns the first root.
+	 * Complexity O(1).
 	 */
 	public HeapNode getFirst() {
 		return this.firstRoot;
