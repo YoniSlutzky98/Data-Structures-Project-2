@@ -205,7 +205,9 @@ public class FibonacciHeap
     		do {
     			firstChild.setParent(null);
     			firstChild.unmark();
-    			this.markedCount--;
+				if (firstChild.getMarked()) {
+					this.markedCount--;
+				}
     			firstChild = firstChild.getNext();
     		} while (firstChild.getKey() != firstKey);
     	}
@@ -230,7 +232,9 @@ public class FibonacciHeap
     		do {
     			firstChild.setParent(null);
     			firstChild.unmark();
-    			this.markedCount--;
+				if (firstChild.getMarked()) {
+					this.markedCount--;
+				}
     			firstChild = firstChild.getNext();
     		} while (firstChild.getKey() != firstKey);    		
     	}
@@ -273,6 +277,7 @@ public class FibonacciHeap
     			}
     		}
     		this.size = this.size + heap2.size;
+			this.markedCount = this.markedCount + heap2.markedCount;
     		this.treeCount = this.treeCount + heap2.treeCount;
     	}
     }
@@ -349,7 +354,9 @@ public class FibonacciHeap
     	HeapNode parent = node.getParent();
     	node.setParent(null);
     	node.unmark();
-    	this.markedCount--;
+		if (node.getMarked()) {
+			this.markedCount--;
+		}
     	parent.setRank(parent.getRank()-1);
     	if (node.getNext().getKey() == node.getKey()) { // If node is an only child
     		parent.setChild(null);
