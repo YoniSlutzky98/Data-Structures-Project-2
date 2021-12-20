@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * FibonacciHeap
  *
@@ -204,8 +206,10 @@ public class FibonacciHeap
     		this.minimalRoot.setChild(null);
     		do {
     			firstChild.setParent(null);
-    			firstChild.unmark();
-    			this.markedCount--;
+    			if (firstChild.getMarked()) {
+    				firstChild.unmark();
+    				this.markedCount--;
+    			}
     			firstChild = firstChild.getNext();
     		} while (firstChild.getKey() != firstKey);
     	}
@@ -229,8 +233,10 @@ public class FibonacciHeap
     		}
     		do {
     			firstChild.setParent(null);
-    			firstChild.unmark();
-    			this.markedCount--;
+    			if (firstChild.getMarked()) {
+    				firstChild.unmark();
+    				this.markedCount--;
+    			}
     			firstChild = firstChild.getNext();
     		} while (firstChild.getKey() != firstKey);    		
     	}
@@ -274,6 +280,7 @@ public class FibonacciHeap
     		}
     		this.size = this.size + heap2.size;
     		this.treeCount = this.treeCount + heap2.treeCount;
+    		this.markedCount = this.markedCount + heap2.markedCount;
     	}
     }
 
@@ -348,8 +355,10 @@ public class FibonacciHeap
     private void cut(HeapNode node) {
     	HeapNode parent = node.getParent();
     	node.setParent(null);
-    	node.unmark();
-    	this.markedCount--;
+    	if (node.getMarked()) {
+    		node.unmark();
+    		this.markedCount--;
+    	}
     	parent.setRank(parent.getRank()-1);
     	if (node.getNext().getKey() == node.getKey()) { // If node is an only child
     		parent.setChild(null);
@@ -384,6 +393,7 @@ public class FibonacciHeap
     	if (parent.getParent() != null) { // Check if parent isn't a root
     		if (!parent.getMarked()) { // If the parent isn't marked
     			parent.mark();
+    			this.markedCount++;
     		}
     		else { // If the parent is marked
     			cascadingCut(parent);
@@ -585,5 +595,42 @@ public class FibonacciHeap
     	private void setSpecialChild(HeapNode c) { // Sets the specialChild field of the node. Used only in kMin(). Complexity O(1).
     		this.specialChild = c;
     	}
+    }
+    public static void q1(int m) {
+    	FibonacciHeap h = new FibonacciHeap();
+    	HeapNode[] arr = new HeapNode[m+1];
+    	long t1 = System.currentTimeMillis();
+    	for (int i = m-1; i > -2; i--) {
+    		arr[i+1] = h.insert(i);
+    	}
+    	h.deleteMin();
+    	//HeapPrinter.print(h, false);
+    	for (int i = (int) (Math.log(m) / Math.log(2)); i > 0; i-- ) {
+    		h.decreaseKey(arr[m - (int) Math.pow(2, i) + 2], m + 1);
+    	}
+    	//h.decreaseKey(arr[m-1], m+1); Section f
+    	//HeapPrinter.print(h, false);
+    	long t2 = System.currentTimeMillis();
+    	System.out.println("Runtime is " + (t2-t1));
+    	System.out.println("Links " + h.totalLinks);
+    	System.out.println("Cuts " + h.totalCuts);
+    	System.out.println("Potential " + h.potential());
+    }
+    
+    public static void q2(int m) {
+    	FibonacciHeap h = new FibonacciHeap();
+    	long t1 = System.currentTimeMillis();
+    	for (int i = m; i > -1; i--) {
+    		h.insert(i);
+    	}
+    	for (int i = 1; i < 3 * m / 4 + 1; i++) {
+    		h.deleteMin();
+    	}
+    	//HeapPrinter.print(h, false);
+    	long t2 = System.currentTimeMillis();
+    	System.out.println("Runtime is " + (t2-t1));
+    	System.out.println("Links " + h.totalLinks);
+    	System.out.println("Cuts " + h.totalCuts);
+    	System.out.println("Potential " + h.potential());
     }
 }
