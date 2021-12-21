@@ -204,8 +204,8 @@ public class FibonacciHeap
     		this.minimalRoot.setChild(null);
     		do {
     			firstChild.setParent(null);
-    			firstChild.unmark();
-				if (firstChild.getMarked()) {
+				if (firstChild.getMarked()) { // Un-marking the new roots
+					firstChild.unmark();
 					this.markedCount--;
 				}
     			firstChild = firstChild.getNext();
@@ -231,8 +231,8 @@ public class FibonacciHeap
     		}
     		do {
     			firstChild.setParent(null);
-    			firstChild.unmark();
-				if (firstChild.getMarked()) {
+				if (firstChild.getMarked()) { // Un-marking the new roots
+					firstChild.unmark();
 					this.markedCount--;
 				}
     			firstChild = firstChild.getNext();
@@ -353,8 +353,8 @@ public class FibonacciHeap
     private void cut(HeapNode node) {
     	HeapNode parent = node.getParent();
     	node.setParent(null);
-    	node.unmark();
-		if (node.getMarked()) {
+		if (node.getMarked()) { // Un-marking the new root
+	    	node.unmark();
 			this.markedCount--;
 		}
     	parent.setRank(parent.getRank()-1);
