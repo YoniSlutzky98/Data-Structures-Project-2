@@ -43,6 +43,7 @@ public class FibonacciHeap
     		node.setPrev(lastRoot);
     		lastRoot.setNext(node);
     		this.firstRoot.setPrev(node);
+    		this.firstRoot = node;
     		if (this.minimalRoot.getKey() > node.getKey()) { // Updating the minimal heap-node field.
     			this.minimalRoot = node;
     		}
@@ -74,8 +75,8 @@ public class FibonacciHeap
      * Complexity O(1). 
      */
     private HeapNode linkHelper(HeapNode root1, HeapNode root2) {
-    	HeapNode prev2 = root2.getPrev(); // Get the bigger-key roots previous node. Could be itself.
-		HeapNode next2 = root2.getNext(); // Get same roots next node. Could be itself.
+    	HeapNode prev2 = root2.getPrev(); // Get the bigger-key root'ss previous node. Could be itself.
+		HeapNode next2 = root2.getNext(); // Get same root's next node. Could be itself.
 		prev2.setNext(next2);
 		next2.setPrev(prev2); // These two lines remove tree with root2 from the list of trees.
 		if (this.firstRoot.getKey() == root2.getKey()) { // root2 was the heaps first root.
@@ -124,7 +125,7 @@ public class FibonacciHeap
     private void consolidate() {
     	int length = 3 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1; // Large size just in case
     	HeapNode[] cups = new HeapNode[length];
-    	HeapNode curr = this.firstRoot.getPrev();
+    	HeapNode curr = this.firstRoot;
     	// Iterate over roots from last to first and either insert 
     	// to empty cell or link with root in cell and move up
     	do {
@@ -133,8 +134,8 @@ public class FibonacciHeap
     			cups[curr.getRank()-1] = null;
     		}
     		cups[curr.getRank()] = curr;
-    		curr = curr.getPrev();
-    	} while (curr.getKey() != this.firstRoot.getPrev().getKey());
+    		curr = curr.getNext();
+    	} while (curr.getKey() != this.firstRoot.getKey());
     	int newLength = 0; // Creating "thinner" array of the consolidated roots
     	for (int i = 0; i < length; i++) {
     		if (cups[i] != null) {
@@ -143,13 +144,13 @@ public class FibonacciHeap
     	}
     	HeapNode[] newCups = new HeapNode[newLength];
     	int index = 0;
-    	for (int i = length-1; i > -1; i--) {
+    	for (int i = 0; i < length; i++) {
     		if (cups[i] != null) {
     			newCups[index] = cups[i];
     			index++;
     		}
     	}
-    	this.firstRoot = newCups[0]; // Setting roots to be consolidated roots in decreasing order of ranks
+    	this.firstRoot = newCups[0]; // Setting roots to be consolidated roots in increasing order of ranks
     	this.minimalRoot = newCups[0];
     	int min = this.minimalRoot.getKey();
     	for (int i = 0; i < newLength-1; i++) {
@@ -376,6 +377,7 @@ public class FibonacciHeap
     	node.setPrev(this.firstRoot.getPrev());
     	this.firstRoot.setPrev(node);
     	node.setNext(this.firstRoot);
+    	this.firstRoot = node;
     	if (this.minimalRoot.getKey() > node.getKey()) { // Validating minimalRoot
     		this.minimalRoot = node;
     	}
@@ -502,7 +504,7 @@ public class FibonacciHeap
 	 * The function returns the first root.
 	 * Complexity O(1).
 	 */
-	public HeapNode getFirst() {
+	public HeapNode getFirst() { // TODO Delete this before submitting
 		return this.firstRoot;
 	}
     
