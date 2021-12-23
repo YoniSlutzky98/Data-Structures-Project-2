@@ -124,15 +124,17 @@ public class FibonacciHeap
     private void consolidate() {
     	int length = 3 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1; // Large size just in case
     	HeapNode[] cups = new HeapNode[length];
-    	HeapNode curr = this.firstRoot;
-    	do { // Iterate over roots and either insert to empty cell or link with root in cell and move up
+    	HeapNode curr = this.firstRoot.getPrev();
+    	// Iterate over roots from last to first and either insert 
+    	// to empty cell or link with root in cell and move up
+    	do {
     		while (cups[curr.getRank()] != null) {
     			curr = this.link(curr, cups[curr.getRank()]);
     			cups[curr.getRank()-1] = null;
     		}
     		cups[curr.getRank()] = curr;
-    		curr = curr.getNext();
-    	} while (curr.getKey() != this.firstRoot.getKey());
+    		curr = curr.getPrev();
+    	} while (curr.getKey() != this.firstRoot.getPrev().getKey());
     	int newLength = 0; // Creating "thinner" array of the consolidated roots
     	for (int i = 0; i < length; i++) {
     		if (cups[i] != null) {
@@ -152,7 +154,7 @@ public class FibonacciHeap
     	int min = this.minimalRoot.getKey();
     	for (int i = 0; i < newLength-1; i++) {
     		newCups[i].setNext(newCups[i+1]);
-    		newCups[i+1].setParent(newCups[i]);
+    		newCups[i+1].setPrev(newCups[i]);
     		if (min > newCups[i].getKey()) {
     			this.minimalRoot = newCups[i];
     			min = newCups[i].getKey();
@@ -620,7 +622,7 @@ public class FibonacciHeap
     public static void q2(int m) {
     	FibonacciHeap h = new FibonacciHeap();
     	long t1 = System.currentTimeMillis();
-    	for (int i = m; i > -1; i--) {
+    	for (int i = 0; i < m+1; i++) {
     		h.insert(i);
     	}
     	for (int i = 1; i < 3 * m / 4 + 1; i++) {
