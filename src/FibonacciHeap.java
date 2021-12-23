@@ -19,7 +19,7 @@ public class FibonacciHeap
     */
     public boolean isEmpty() 
     {
-    	return size == 0;
+    	return this.size == 0;
     }
 		
     /* Helper function for insert().
@@ -123,7 +123,7 @@ public class FibonacciHeap
      * W.C. Complexity O(n). 
      */
     private void consolidate() {
-    	int length = 3 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1; // Large size just in case
+    	int length = 4 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1; // Large size just in case
     	HeapNode[] cups = new HeapNode[length];
     	HeapNode curr = this.firstRoot;
     	// Iterate over roots from last to first and either insert 
@@ -229,10 +229,7 @@ public class FibonacciHeap
     		int firstKey = firstChild.getKey();
     		HeapNode lastChild = firstChild.getPrev();
     		this.minimalRoot.setChild(null);
-    		prevNode.setNext(firstChild);
-    		firstChild.setPrev(prevNode);
-    		nextNode.setPrev(lastChild);
-    		lastChild.setNext(nextNode);
+
     		this.minimalRoot.setNext(null);
     		this.minimalRoot.setPrev(null);
     		if (this.minimalRoot.getKey() == this.firstRoot.getKey()) { // Minimal was first
@@ -245,7 +242,11 @@ public class FibonacciHeap
     				this.markedCount--;
     			}
     			firstChild = firstChild.getNext();
-    		} while (firstChild.getKey() != firstKey);    		
+    		} while (firstChild.getKey() != firstKey);
+    		prevNode.setNext(firstChild);
+    		firstChild.setPrev(prevNode);
+    		nextNode.setPrev(lastChild);
+    		lastChild.setNext(nextNode);
     	}
     	consolidate();     	
     }
@@ -640,5 +641,33 @@ public class FibonacciHeap
     	System.out.println("Links " + h.totalLinks);
     	System.out.println("Cuts " + h.totalCuts);
     	System.out.println("Potential " + h.potential());
+    }
+    
+    public static void main(String[] args) {
+    	FibonacciHeap h = new FibonacciHeap();
+    	int[] keys = new int[] {4, 6, 2, 15, 14, 13, 10, 5, 7, 11, 16, 19, 12, 0, 8, 18, 9, 17, 3, 1};
+    	for (int k:keys) {
+    		h.insert(k);
+    	}
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
+    	h.deleteMin();
+    	HeapPrinter.print(h, false);
+    	System.out.println("----------------------------------------------");
     }
 }
