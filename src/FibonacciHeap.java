@@ -219,6 +219,8 @@ public class FibonacciHeap
     	else if (firstChild == null) { // Minimal has no children, has siblings
     		prevNode.setNext(nextNode);
     		nextNode.setPrev(prevNode);
+    		this.minimalRoot.setNext(null);
+    		this.minimalRoot.setPrev(null);
     		if (this.minimalRoot.getKey() == this.firstRoot.getKey()) { // Minimal was first
     			this.firstRoot = nextNode;
     		}
@@ -231,6 +233,8 @@ public class FibonacciHeap
     		firstChild.setPrev(prevNode);
     		nextNode.setPrev(lastChild);
     		lastChild.setNext(nextNode);
+    		this.minimalRoot.setNext(null);
+    		this.minimalRoot.setPrev(null);
     		if (this.minimalRoot.getKey() == this.firstRoot.getKey()) { // Minimal was first
     			this.firstRoot = firstChild;
     		}
