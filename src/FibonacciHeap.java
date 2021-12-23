@@ -75,13 +75,6 @@ public class FibonacciHeap
      * Complexity O(1). 
      */
     private HeapNode linkHelper(HeapNode root1, HeapNode root2) {
-    	HeapNode prev2 = root2.getPrev(); // Get the bigger-key root'ss previous node. Could be itself.
-		HeapNode next2 = root2.getNext(); // Get same root's next node. Could be itself.
-		prev2.setNext(next2);
-		next2.setPrev(prev2); // These two lines remove tree with root2 from the list of trees.
-		if (this.firstRoot.getKey() == root2.getKey()) { // root2 was the heaps first root.
-			this.firstRoot = next2;
-		}
 		if (root1.getChild() == null) { // root1 is a single node with no children.
 			root2.setNext(root2);
 			root2.setPrev(root2);
@@ -123,19 +116,21 @@ public class FibonacciHeap
      * W.C. Complexity O(n). 
      */
     private void consolidate() {
-    	int length = 4 * (int)Math.floor(Math.log(this.size) / Math.log(2)) + 1; // Large size just in case
+    	int length = 2 * (int)(Math.floor(Math.log(this.size) / Math.log(2))) + 1; // Large size just in case
     	HeapNode[] cups = new HeapNode[length];
     	HeapNode curr = this.firstRoot;
-    	// Iterate over roots from last to first and either insert 
+    	// Iterate over roots from first to last and either insert 
     	// to empty cell or link with root in cell and move up
-    	do {
-    		while (cups[curr.getRank()] != null) {
-    			curr = this.link(curr, cups[curr.getRank()]);
-    			cups[curr.getRank()-1] = null;
-    		}
-    		cups[curr.getRank()] = curr;
+    	curr.getPrev().setNext(null);
+    	while (curr != null) {
+    		HeapNode temp = curr;
     		curr = curr.getNext();
-    	} while (curr.getKey() != this.firstRoot.getKey());
+    		while (cups[temp.getRank()] != null) {
+    			temp = this.link(temp, cups[temp.getRank()]);
+    			cups[temp.getRank()-1] = null;
+    		}
+    		cups[temp.getRank()] = temp;
+    	}
     	int newLength = 0; // Creating "thinner" array of the consolidated roots
     	for (int i = 0; i < length; i++) {
     		if (cups[i] != null) {
@@ -421,6 +416,9 @@ public class FibonacciHeap
     public void decreaseKey(HeapNode x, int delta)
     {    
     	x.setKey(x.getKey() - delta); // Decrease the node's key
+    	if (x.getKey() < this.findMin().getKey()) {
+    		this.minimalRoot = x;
+    	}
     	if (x.getParent() == null) {
     		return;
     	}
@@ -604,6 +602,35 @@ public class FibonacciHeap
     	private void setSpecialChild(HeapNode c) { // Sets the specialChild field of the node. Used only in kMin(). Complexity O(1).
     		this.specialChild = c;
     	}
+    	public void printNode() {
+    		System.out.println(this.getKey());
+    		System.out.println(this.getRank());
+    		System.out.println(this.getMarked());
+    		if (this.getParent() != null) {
+    			System.out.println("parent:" + this.getParent().getKey());
+    		}
+    		else {
+    			System.out.println("parent is null");
+    		}
+    		if (this.getPrev() != null) {
+    			System.out.println("prev:" + this.getPrev().getKey());
+    		}
+    		else {
+    			System.out.println("prev is null");
+    		}
+    		if (this.getNext() != null) {
+    			System.out.println("next:" + this.getNext().getKey());
+    		}
+    		else {
+    			System.out.println("next is null");
+    		}
+    		if (this.getChild() != null) {
+    			System.out.println("child:" + this.getChild().getKey());
+    		}
+    		else {
+    			System.out.println("child is null");
+    		}
+    	}
     }
     public static void q1(int m) {
     	FibonacciHeap h = new FibonacciHeap();
@@ -644,30 +671,25 @@ public class FibonacciHeap
     }
     
     public static void main(String[] args) {
-    	FibonacciHeap h = new FibonacciHeap();
-    	int[] keys = new int[] {4, 6, 2, 15, 14, 13, 10, 5, 7, 11, 16, 19, 12, 0, 8, 18, 9, 17, 3, 1};
-    	for (int k:keys) {
-    		h.insert(k);
-    	}
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
-    	h.deleteMin();
-    	HeapPrinter.print(h, false);
-    	System.out.println("----------------------------------------------");
+    	q1((int)Math.pow(2, 10));
+    	System.out.println("---------------");
+    	q1((int)Math.pow(2, 15));
+    	System.out.println("---------------");
+    	q1((int)Math.pow(2, 20));
+    	System.out.println("---------------");
+    	q1((int)Math.pow(2, 25));
+    	System.out.println("---------------");
+    	/*
+    	q2((int)Math.pow(3, 6)-1);
+    	System.out.println("---------------");
+    	q2((int)Math.pow(3, 8)-1);
+    	System.out.println("---------------");
+    	q2((int)Math.pow(3, 10)-1);
+    	System.out.println("---------------");
+    	q2((int)Math.pow(3, 12)-1);
+    	System.out.println("---------------");
+    	q2((int)Math.pow(3, 14)-1);
+    	System.out.println("---------------");
+    	*/
     }
 }
