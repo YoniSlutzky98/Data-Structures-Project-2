@@ -146,7 +146,7 @@ public class FibonacciHeap
     	this.firstRoot = newCups[0]; // Setting roots to be consolidated roots in increasing order of ranks
     	this.minimalRoot = newCups[0];
     	int min = this.minimalRoot.getKey();
-    	for (int i = 0; i < newLength-1; i++) {
+    	for (int i = 0; i < newLength-1; i++) { // Shrink the array
     		newCups[i].setNext(newCups[i+1]);
     		newCups[i+1].setPrev(newCups[i]);
     		if (min > newCups[i].getKey()) {
@@ -207,7 +207,7 @@ public class FibonacciHeap
     				this.markedCount--;
     			}
     			firstChild = firstChild.getNext();
-    		} while (firstChild.getKey() != firstKey);
+    		} while (firstChild.getKey() != firstKey); // Since children are now roots - unmark all of them.
     	}
     	else if (firstChild == null) { // Minimal has no children, has siblings
     		prevNode.setNext(nextNode);
@@ -281,7 +281,7 @@ public class FibonacciHeap
     		}
     		this.size = this.size + heap2.size;
     		this.treeCount = this.treeCount + heap2.treeCount;
-    		this.markedCount = this.markedCount + heap2.markedCount;
+    		this.markedCount = this.markedCount + heap2.markedCount; // Fix heap fields
     	}
     }
 
@@ -414,10 +414,10 @@ public class FibonacciHeap
     public void decreaseKey(HeapNode x, int delta)
     {    
     	x.setKey(x.getKey() - delta); // Decrease the node's key
-    	if (x.getKey() < this.findMin().getKey()) {
+    	if (x.getKey() < this.findMin().getKey()) { // Set up a new minimal root if needed
     		this.minimalRoot = x;
     	}
-    	if (x.getParent() == null) {
+    	if (x.getParent() == null) { // x was a root and no cascading cut is required - end function run
     		return;
     	}
     	if (x.getKey() < x.getParent().getKey()) { // Cascade if necessary
@@ -487,27 +487,18 @@ public class FibonacciHeap
     	helperHeap.insertHelper(H.minimalRoot.getKey(), H.minimalRoot.getChild());
     	for (int i = 0; i < k; i++) { // Delete k minimums from the helper heap, inserting its children in its place
     		arr[i] = helperHeap.minimalRoot.getKey(); // The minimal key will be inserted into arr
-    		if (helperHeap.minimalRoot.getSpecialChild() != null) {
+    		if (helperHeap.minimalRoot.getSpecialChild() != null) { // Minimal root had children in original heap
     			HeapNode child = helperHeap.minimalRoot.getSpecialChild();
     			int first = child.getKey();
     			do {
     				helperHeap.insertHelper(child.getKey(), child.getChild());
     				child = child.getNext();
-    			} while (child.getKey() != first);
+    			} while (child.getKey() != first); // Insert all of minimal root's children to helper heap
     		}	
     		helperHeap.deleteMin();
     	}
     	return arr;
     }
-
-	/**
-	 * Helper function.
-	 * The function returns the first root.
-	 * Complexity O(1).
-	 */
-	public HeapNode getFirst() { // TODO Delete this before submitting
-		return this.firstRoot;
-	}
     
    /**
     * public class HeapNode
