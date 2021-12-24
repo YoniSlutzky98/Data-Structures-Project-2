@@ -671,25 +671,14 @@ public class FibonacciHeap
     }
     
     public static void main(String[] args) {
-    	q1((int)Math.pow(2, 10));
-    	System.out.println("---------------");
-    	q1((int)Math.pow(2, 15));
-    	System.out.println("---------------");
-    	q1((int)Math.pow(2, 20));
-    	System.out.println("---------------");
-    	q1((int)Math.pow(2, 25));
-    	System.out.println("---------------");
-    	/*
-    	q2((int)Math.pow(3, 6)-1);
-    	System.out.println("---------------");
-    	q2((int)Math.pow(3, 8)-1);
-    	System.out.println("---------------");
-    	q2((int)Math.pow(3, 10)-1);
-    	System.out.println("---------------");
-    	q2((int)Math.pow(3, 12)-1);
-    	System.out.println("---------------");
-    	q2((int)Math.pow(3, 14)-1);
-    	System.out.println("---------------");
-    	*/
+    	//q1((int)Math.pow(2, 10));
+    	//q1((int)Math.pow(2, 15));
+    	//q1((int)Math.pow(2, 20));
+    	//q1((int)Math.pow(2, 25));
+    	//q2((int)Math.pow(3, 6)-1);
+    	//q2((int)Math.pow(3, 8)-1);
+    	//q2((int)Math.pow(3, 10)-1);
+    	//q2((int)Math.pow(3, 12)-1);
+    	//q2((int)Math.pow(3, 14)-1);
     }
 }
